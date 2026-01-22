@@ -2,7 +2,7 @@ import fastapi
 from pydantic import BaseModel
 
 from server.routes.wifi import custom_generate_unique_id
-from server.utils.subprocess_runner import run_sudo_command, run_command
+from server.utils.subprocess_runner import run_sudo_command
 
 
 CONFIGURE_ASL_SCRIPT = "/home/rln/configure-asl3.sh"
@@ -77,26 +77,6 @@ def set_rln_user_password(password: str) -> tuple[bool, str]:
     return False, result.stderr
 
 
-def run_sudo_command_with_input(args: list[str], input_text: str) -> tuple[bool, str]:
-    """Run sudo command with stdin input"""
-    from server.utils.subprocess_runner import CommandResult
-    import subprocess
-
-    try:
-        result = subprocess.run(
-            ["sudo"] + args,
-            input=input_text,
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-        if result.returncode == 0:
-            return True, "Success"
-        return False, result.stderr
-    except Exception as e:
-        return False, str(e)
-
-
 @router.get("")
 def get_asl_status() -> ASLStatus:
     """Get current ASL status (passwords not returned)"""
@@ -133,9 +113,7 @@ def set_asl(config: ASLConfig) -> ASLResult:
         errors.append(f"allmon3 restart: {msg}")
 
     # Step 5: Set rln user password
-    success, msg = run_sudo_command_with_input(
-        ["chpasswd"], f"rln:{config.login_password}\n"
-    )
+    success, msg = set_rln_user_password(config.login_password)
     if not success:
         errors.append(f"user password: {msg}")
 

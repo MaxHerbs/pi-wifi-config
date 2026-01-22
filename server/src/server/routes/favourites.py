@@ -51,9 +51,7 @@ def write_favourites_file(config: FavouritesConfig) -> None:
 def read_favourites_file() -> FavouritesConfig:
     """Read favourites from file"""
     if not FAVOURITES_PATH.exists():
-        return FavouritesConfig(
-            items=[FavouriteItem(**f) for f in DEFAULT_FAVOURITES]
-        )
+        return FavouritesConfig(items=[FavouriteItem(**f) for f in DEFAULT_FAVOURITES])
 
     items: List[FavouriteItem] = []
     with open(FAVOURITES_PATH) as f:

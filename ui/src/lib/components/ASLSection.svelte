@@ -24,7 +24,8 @@
 		</div>
 
 		<div>
-			<label for="asl-callsign" class="mb-1 block text-sm font-medium text-gray-700">Callsign</label>
+			<label for="asl-callsign" class="mb-1 block text-sm font-medium text-gray-700">Callsign</label
+			>
 			<input
 				id="asl-callsign"
 				type="text"
@@ -38,7 +39,9 @@
 
 	<div class="grid grid-cols-2 gap-4">
 		<div>
-			<label for="asl-node-password" class="mb-1 block text-sm font-medium text-gray-700">Node Password</label>
+			<label for="asl-node-password" class="mb-1 block text-sm font-medium text-gray-700"
+				>Node Password</label
+			>
 			<input
 				id="asl-node-password"
 				type="text"
@@ -50,7 +53,9 @@
 		</div>
 
 		<div>
-			<label for="asl-login-password" class="mb-1 block text-sm font-medium text-gray-700">Login Password</label>
+			<label for="asl-login-password" class="mb-1 block text-sm font-medium text-gray-700"
+				>Login Password</label
+			>
 			<input
 				id="asl-login-password"
 				type="text"

@@ -63,7 +63,9 @@
 
 <div class="grid gap-4">
 	<div>
-		<label for="wifi-ssid" class="mb-1 block text-sm font-medium text-gray-700">Network Name (SSID)</label>
+		<label for="wifi-ssid" class="mb-1 block text-sm font-medium text-gray-700"
+			>Network Name (SSID)</label
+		>
 		<input
 			id="wifi-ssid"
 			type="text"
@@ -87,14 +89,16 @@
 	</div>
 
 	<div>
-		<label for="wifi-country" class="mb-1 block text-sm font-medium text-gray-700">Country Code</label>
+		<label for="wifi-country" class="mb-1 block text-sm font-medium text-gray-700"
+			>Country Code</label
+		>
 		<select
 			id="wifi-country"
 			bind:value={config.country}
 			{disabled}
 			class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none disabled:bg-gray-100"
 		>
-			{#each countries as country}
+			{#each countries as country (country.code)}
 				<option value={country.code}>{country.name} ({country.code})</option>
 			{/each}
 		</select>

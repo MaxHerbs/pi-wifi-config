@@ -1,6 +1,5 @@
 import fastapi
 from pydantic import BaseModel
-from typing import List
 
 from server.routes.wifi import (
     custom_generate_unique_id,
@@ -12,7 +11,6 @@ from server.routes.wifi import (
 )
 from server.routes.favourites import (
     FavouritesConfig,
-    FavouriteItem,
     read_favourites_file,
     write_favourites_file,
     restart_display_service,
@@ -24,7 +22,7 @@ from server.routes.asl import (
     restart_asterisk,
     set_allmon3_password,
     restart_allmon3,
-    run_sudo_command_with_input,
+    set_rln_user_password,
 )
 
 
@@ -173,9 +171,7 @@ def update_configuration(request: ConfigurationRequest) -> ConfigurationUpdateRe
                 errors.append(f"allmon3: {msg}")
 
             # Step 5: Set rln user password
-            success, msg = run_sudo_command_with_input(
-                ["chpasswd"], f"rln:{request.asl.login_password}\n"
-            )
+            success, msg = set_rln_user_password(request.asl.login_password)
             if not success:
                 errors.append(f"user password: {msg}")
 
@@ -185,7 +181,9 @@ def update_configuration(request: ConfigurationRequest) -> ConfigurationUpdateRe
                 )
             else:
                 results["asl"] = SectionResult(
-                    success=False, message="ASL configuration had errors", error="; ".join(errors)
+                    success=False,
+                    message="ASL configuration had errors",
+                    error="; ".join(errors),
                 )
                 overall_success = False
 

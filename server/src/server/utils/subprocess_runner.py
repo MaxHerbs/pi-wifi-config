@@ -1,5 +1,4 @@
 import subprocess
-import shlex
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -51,14 +50,14 @@ def run_command(
             stderr=result.stderr,
             return_code=result.returncode,
         )
-    except subprocess.TimeoutExpired as e:
+    except subprocess.TimeoutExpired:
         return CommandResult(
             success=False,
             stdout="",
             stderr=f"Command timed out after {timeout} seconds",
             return_code=-1,
         )
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         return CommandResult(
             success=False,
             stdout="",
@@ -74,15 +73,20 @@ def run_command(
         )
 
 
-def run_sudo_command(args: List[str], timeout: int = 30) -> CommandResult:
+def run_sudo_command(
+    args: List[str],
+    timeout: int = 30,
+    input_text: Optional[str] = None,
+) -> CommandResult:
     """
     Run a command with sudo.
 
     Args:
         args: List of command arguments (sudo will be prepended)
         timeout: Timeout in seconds
+        input_text: Optional input to pass to stdin
 
     Returns:
         CommandResult with success status, stdout, stderr, and return code
     """
-    return run_command(["sudo"] + args, timeout=timeout)
+    return run_command(["sudo"] + args, timeout=timeout, input_text=input_text)

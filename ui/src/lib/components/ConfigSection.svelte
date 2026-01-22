@@ -11,7 +11,9 @@
 	let { title, enabled, children, onToggle }: Props = $props();
 </script>
 
-<section class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm {enabled ? '' : 'opacity-60'}">
+<section
+	class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm {enabled ? '' : 'opacity-60'}"
+>
 	<div class="mb-4 flex items-center gap-3">
 		<input
 			type="checkbox"

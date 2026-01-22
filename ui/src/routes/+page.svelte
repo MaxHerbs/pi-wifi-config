@@ -5,7 +5,6 @@
 		WiFiConfig,
 		AslConfig,
 		ConfigurationRequest,
-		ConfigurationUpdateResponse,
 		SectionResult
 	} from '../client';
 	import { defaultGetConfigurationGet, defaultUpdateConfigurationPost } from '../client';
@@ -153,11 +152,7 @@
 					<WiFiSection bind:config={wifi} disabled={!wifiEnabled} />
 				</ConfigSection>
 
-				<ConfigSection
-					title="ASL Settings"
-					enabled={aslEnabled}
-					onToggle={(v) => (aslEnabled = v)}
-				>
+				<ConfigSection title="ASL Settings" enabled={aslEnabled} onToggle={(v) => (aslEnabled = v)}>
 					<ASLSection bind:config={asl} disabled={!aslEnabled} />
 				</ConfigSection>
 
@@ -177,7 +172,7 @@
 			{#if results}
 				<div class="mt-6 space-y-3">
 					<h2 class="text-lg font-semibold text-gray-800">Results</h2>
-					{#each Object.entries(results) as [section, result]}
+					{#each Object.entries(results) as [section, result] (section)}
 						<div
 							class="rounded-lg border p-4 {result.success
 								? 'border-green-200 bg-green-50'

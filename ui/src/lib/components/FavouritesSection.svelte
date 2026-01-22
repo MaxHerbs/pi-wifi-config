@@ -14,7 +14,7 @@
 </script>
 
 <div class="grid gap-3">
-	{#each items as item, index}
+	{#each items as item, index (index)}
 		<div class="grid grid-cols-2 gap-3">
 			<div>
 				<label for="fav-name-{index}" class="mb-1 block text-sm font-medium text-gray-700">

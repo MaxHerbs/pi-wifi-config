@@ -41,9 +41,7 @@ class ErrorResponse(BaseModel):
 
 def get_current_wifi_status() -> WiFiStatus:
     """Get current WiFi connection status using nmcli"""
-    result = run_sudo_command(
-        ["nmcli", "-t", "-f", "active,ssid", "dev", "wifi"]
-    )
+    result = run_sudo_command(["nmcli", "-t", "-f", "active,ssid", "dev", "wifi"])
 
     ssid = None
     if result.success:
