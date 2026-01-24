@@ -41,25 +41,53 @@ router = fastapi.APIRouter(
 )
 
 
-def write_favourites_file(config: FavouritesConfig) -> None:
-    """Write favourites to file in format: name:node_number per line"""
+def read_node_number_from_file() -> str | None:
+    """Read the node number from the first line of the favourites file"""
+    if not FAVOURITES_PATH.exists():
+        return None
+    with open(FAVOURITES_PATH) as f:
+        first_line = f.readline().strip()
+        # First line should be just a node number (digits only)
+        if first_line and first_line.isdigit():
+            return first_line
+    return None
+
+
+DEFAULT_NODE_NUMBER = "99999"
+
+
+def write_favourites_file(config: FavouritesConfig, node_number: str | None = None) -> None:
+    """Write favourites to file with node number as first line, then name,node_number per line.
+    If node_number not provided, reads existing one from file or defaults to 99999."""
+    if node_number is None:
+        node_number = read_node_number_from_file()
+    if node_number is None:
+        node_number = DEFAULT_NODE_NUMBER
+
     with open(FAVOURITES_PATH, "w") as f:
+        f.write(f"{node_number}\n")
         for item in config.items:
-            f.write(f"{item.name}:{item.node_number}\n")
+            f.write(f"{item.name},{item.node_number}\n")
 
 
 def read_favourites_file() -> FavouritesConfig:
-    """Read favourites from file"""
+    """Read favourites from file. First line is node number (skipped), rest are name,node_number"""
     if not FAVOURITES_PATH.exists():
         return FavouritesConfig(items=[FavouriteItem(**f) for f in DEFAULT_FAVOURITES])
 
     items: List[FavouriteItem] = []
     with open(FAVOURITES_PATH) as f:
-        for line in f:
+        lines = f.readlines()
+        # Skip first line if it's a node number (digits only)
+        start_idx = 0
+        if lines and lines[0].strip().isdigit():
+            start_idx = 1
+
+        for line in lines[start_idx:]:
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            parts = line.split(":")
+            parts = line.split(",")
             if len(parts) == 2:
                 items.append(FavouriteItem(name=parts[0], node_number=parts[1]))
 
@@ -72,6 +100,12 @@ def read_favourites_file() -> FavouritesConfig:
             items.append(FavouriteItem(name="", node_number=""))
 
     return FavouritesConfig(items=items[:6])  # Max 6 items
+
+
+def write_node_number_to_favourites_file(node_number: str) -> None:
+    """Update only the node number in the favourites file, preserving existing favourites"""
+    existing_config = read_favourites_file()
+    write_favourites_file(existing_config, node_number)
 
 
 def restart_display_service() -> CommandResult:

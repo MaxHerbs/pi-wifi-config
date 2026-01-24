@@ -44,6 +44,7 @@
 	// UI states
 	let loading = $state(false);
 	let submitting = $state(false);
+	let showConfirmModal = $state(false);
 	let results = $state<Record<string, SectionResult> | null>(null);
 
 	let anyEnabled = $derived(favouritesEnabled || wifiEnabled || aslEnabled);
@@ -84,10 +85,14 @@
 		}
 	}
 
-	async function handleSubmit(event: Event) {
+	function handleSubmit(event: Event) {
 		event.preventDefault();
 		if (!anyEnabled) return;
+		showConfirmModal = true;
+	}
 
+	async function confirmSubmit() {
+		showConfirmModal = false;
 		submitting = true;
 		results = null;
 
@@ -129,6 +134,10 @@
 		} finally {
 			submitting = false;
 		}
+	}
+
+	function cancelSubmit() {
+		showConfirmModal = false;
 	}
 </script>
 
@@ -197,3 +206,45 @@
 		{/if}
 	</div>
 </main>
+
+{#if showConfirmModal}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+		<div class="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+			<h2 class="mb-4 text-xl font-semibold text-gray-800">Confirm Changes</h2>
+			<p class="mb-4 text-gray-600">You are about to update the following sections:</p>
+			<ul class="mb-6 space-y-2">
+				{#if favouritesEnabled}
+					<li class="flex items-center gap-2 text-gray-700">
+						<span class="text-blue-600">&#8226;</span> Favourites
+					</li>
+				{/if}
+				{#if wifiEnabled}
+					<li class="flex items-center gap-2 text-gray-700">
+						<span class="text-blue-600">&#8226;</span> WiFi Setup
+					</li>
+				{/if}
+				{#if aslEnabled}
+					<li class="flex items-center gap-2 text-gray-700">
+						<span class="text-blue-600">&#8226;</span> ASL Settings
+					</li>
+				{/if}
+			</ul>
+			<div class="flex gap-3">
+				<button
+					type="button"
+					onclick={cancelSubmit}
+					class="flex-1 rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+				>
+					Cancel
+				</button>
+				<button
+					type="button"
+					onclick={confirmSubmit}
+					class="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
+				>
+					Confirm
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}

@@ -13,6 +13,7 @@ from server.routes.favourites import (
     FavouritesConfig,
     read_favourites_file,
     write_favourites_file,
+    write_node_number_to_favourites_file,
     restart_display_service,
 )
 from server.routes.asl import (
@@ -85,7 +86,9 @@ def update_configuration(request: ConfigurationRequest) -> ConfigurationUpdateRe
             overall_success = False
         else:
             try:
-                write_favourites_file(request.favourites)
+                # If ASL is also being updated, use the new node number
+                node_number = request.asl.node_number if request.update_asl and request.asl else None
+                write_favourites_file(request.favourites, node_number)
                 restart_result = restart_display_service()
                 if restart_result.success:
                     results["favourites"] = SectionResult(
@@ -174,6 +177,12 @@ def update_configuration(request: ConfigurationRequest) -> ConfigurationUpdateRe
             success, msg = set_rln_user_password(request.asl.login_password)
             if not success:
                 errors.append(f"user password: {msg}")
+
+            # Step 6: Write node number to favourites file
+            try:
+                write_node_number_to_favourites_file(request.asl.node_number)
+            except Exception as e:
+                errors.append(f"favourites node number: {str(e)}")
 
             if not errors:
                 results["asl"] = SectionResult(
