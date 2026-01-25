@@ -8,7 +8,7 @@ from server.utils.subprocess_runner import run_sudo_command, CommandResult
 
 
 FAVOURITES_PATH = Path("/home/rln/favourites.txt")
-DISPLAY_SERVICE = "rlnz2-display.service"
+DISPLAY_SERVICE = "display_driver.service"
 
 # Default favourites from spec
 DEFAULT_FAVOURITES = [
